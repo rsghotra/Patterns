@@ -1,3 +1,3 @@
 language = "c++"
 onBoot="booting up c++ project"
-run = "g++ -o Fast_Slow_Pointers/main Fast_Slow_Pointers/main.cpp && cd Fast_Slow_Pointers && ./main"
+run = "g++ -o InplaceReversalLL/main InplaceReversalLL/main.cpp && cd InplaceReversalLL && ./main"
