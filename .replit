@@ -1,3 +1,3 @@
 language = "c++"
 onBoot="booting up c++ project"
-run = "g++ -o Tree-BFS/main Tree-BFS/main.cpp && cd Tree-BFS && ./main"
+run = "g++ -o CyclicSort/main CyclicSort/main.cpp && cd CyclicSort && ./main"
