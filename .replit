@@ -1,3 +1,3 @@
 language = "c++"
 onBoot="booting up c++ project"
-run = "g++ -o ModifiedBinarySearch/main ModifiedBinarySearch/main.cpp && cd ModifiedBinarySearch && ./main"
+run = "g++ -o TopK/main TopK/main.cpp && cd TopK && ./main"
