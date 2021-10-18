@@ -93,8 +93,95 @@ void MaximizeCapital() {
     cout << "Maximum capital: " << result << endl;
 }
 
+template<typename T, class Container = vector<T>, class Compare = less<typename Container::value_type>>
+class priority_queue_with_remove: public priority_queue<T, Container, Compare> {
+public:
+    bool remove(const T & valToRemove) {
+        auto itr = std::find(this->c.begin(), this->c.end(), valToRemove);
+        if(itr == this->c.end()) {
+            return false;
+        }
+        this->c.erase(itr);
+        std::make_heap(this->c.begin(), this->c.end(), this->comp);
+        return true;
+    }
+};
+
+class SlidingWindowMedian {
+ public:
+  virtual void rebalanceHeaps(priority_queue_with_remove<int>& maxHeap,priority_queue_with_remove<int, vector<int>, greater<>>& minHeap) {
+    if(maxHeap.size() > minHeap.size() + 1) {
+        minHeap.push(maxHeap.top());
+        maxHeap.pop();
+    } else if(maxHeap.size() < minHeap.size()) {
+        maxHeap.push(minHeap.top());
+        minHeap.pop();
+    }
+  }
+    
+  virtual double calculateMedian(priority_queue_with_remove<int>& maxHeap,priority_queue_with_remove<int, vector<int>, greater<>>& minHeap) {
+    double median = 0;
+    if(maxHeap.size() == minHeap.size()) {
+        median = maxHeap.top()/2.0  + minHeap.top()/2.0;
+    } else {
+        median = maxHeap.top();
+    }
+    return median;
+  }
+
+  virtual vector<double> findSlidingWindowMedian(const vector<int> &nums, int k) {
+    vector<double> result;
+    priority_queue_with_remove<int> maxHeap;
+    priority_queue_with_remove<int, vector<int>, greater<>> minHeap;
+    
+    int windowStart = 0;
+    for(int windowEnd = 0; windowEnd < nums.size(); windowEnd++) {
+        //usually we have maps or some other logic. But in this case we will have heap logic
+        if(maxHeap.empty() || maxHeap.top() >= nums[windowEnd]) {
+            maxHeap.push(nums[windowEnd]);
+        } else {
+            minHeap.push(nums[windowEnd]);
+        }
+        rebalanceHeaps(maxHeap, minHeap);
+        
+        if(windowEnd - windowStart + 1 >= k) {
+            result.push_back(calculateMedian(maxHeap, minHeap));
+            int elementToBeRemoved = nums[windowStart];
+            if(elementToBeRemoved <= maxHeap.top()) {
+                maxHeap.remove(elementToBeRemoved);
+            } else {
+                minHeap.remove(elementToBeRemoved);
+            }
+            rebalanceHeaps(maxHeap, minHeap);
+            windowStart++;
+        }
+    }
+    return result;
+  }
+};
+
+int SlidingWindowMedian() {
+  SlidingWindowMedian slidingWindowMedian;
+  vector<double> result =
+      slidingWindowMedian.findSlidingWindowMedian(vector<int>{1, 2, -1, 3, 5}, 2);
+  cout << "Sliding window medians are: ";
+  for (auto num : result) {
+    cout << num << " ";
+  }
+  cout << endl;
+
+  slidingWindowMedian = SlidingWindowMedian();
+  result = slidingWindowMedian.findSlidingWindowMedian(vector<int>{1, 2, -1, 3, 5}, 3);
+  cout << "Sliding window medians are: ";
+  for (auto num : result) {
+    cout << num << " ";
+  }
+}
+
+
 int main() {
   StreamMedian();
   MaximizeCapital();
+  SlidingWindowMedian();
   return 0;
 }
