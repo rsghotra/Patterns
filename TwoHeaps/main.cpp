@@ -178,10 +178,82 @@ int SlidingWindowMedian() {
   }
 }
 
+class Interval {
+public:
+  int start;
+  int end;
+public:
+  Interval(int s, int e) {
+    this->start = s;
+    this->end = e;
+  }
+};
+
+struct StartCompare {
+  bool operator()(const pair<Interval, int> x, const pair<Interval, int> y) {
+    return x.first.start < y.first.start;
+  }
+};
+
+struct EndCompare {
+  bool operator()(const pair<Interval, int> x, const pair<Interval, int> y) {
+    return x.first.end < y.first.end;
+  }
+};
+
+class NextInterval {
+private:
+  priority_queue<pair<Interval, int>, vector<pair<Interval, int>>, StartCompare> maxStartHeap;
+  priority_queue<pair<Interval, int>, vector<pair<Interval, int>>, EndCompare> maxEndHeap;
+public:
+  virtual vector<int> FindNextIntervals(const vector<Interval>& intervals) {
+    int n = intervals.size();
+    vector<int> result(n, -1);
+    for(int i = 0; i < intervals.size(); i++) {
+      maxStartHeap.push(make_pair(intervals[i], i));
+      maxEndHeap.push(make_pair(intervals[i], i));
+    }
+
+    while(!maxEndHeap.empty()) {
+      auto topEnd = maxEndHeap.top();
+      maxEndHeap.pop();
+      pair<Interval, int> topStart = pair<Interval, int>({-1, -1}, -1);
+      result[topEnd.second] = -1;
+      while(!maxStartHeap.empty() && maxStartHeap.top().first.start >= topEnd.first.end) {
+        topStart = maxStartHeap.top();
+        maxStartHeap.pop();
+      }
+      result[topEnd.second] = topStart.second;
+      //put the interval back as it could be the next interval of other intervals;
+      maxStartHeap.push(topStart);
+    }
+    return result;
+  }
+};
+
+
+void FindNextInterval() {
+  vector<Interval> intervals = {{2, 3}, {3, 4}, {5, 6}};
+  NextInterval nextInterval;
+  vector<int> result = nextInterval.FindNextIntervals(intervals);
+  cout << "\nNext interval indices are: ";
+  for (auto index : result) {
+    cout << index << " ";
+  }
+  cout << endl;
+
+  intervals = {{3, 4}, {1, 5}, {4, 6}};
+  result = nextInterval.FindNextIntervals(intervals);
+  cout << "Next interval indices are: ";
+  for (auto index : result) {
+    cout << index << " ";
+  }
+}
 
 int main() {
   StreamMedian();
   MaximizeCapital();
   SlidingWindowMedian();
+  FindNextInterval();
   return 0;
 }
