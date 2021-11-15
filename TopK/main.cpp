@@ -477,7 +477,7 @@ string ReArrangeString(const string& str) {
     maxHeap.pop();
     result += entry.first;
     entry.second--;
-    if(previous.second > 0) {
+    if(previous.second > 0) { //-1 & 0 are not valid use cases
       maxHeap.push(previous);
     }
     previous = entry;
@@ -523,7 +523,7 @@ string ReArrangeStringKDistanceApart(const string& str, int K) {
     if(queue.size() == K) {
       auto entry = queue.front();
       queue.pop();
-      if(entry.second > 0) { //-1 & 0 are not valid use cases
+      if(entry.second > 0) {
         maxHeap.push(entry);
       }
     }
