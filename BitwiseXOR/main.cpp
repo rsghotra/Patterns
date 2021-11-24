@@ -127,6 +127,19 @@ vector<vector<int>> FlipBinaryImageHorizonatally(vector<vector<int>> image) {
   }
   return image;
 }
+void FlipImageHorizontally2(vector<vector<int>>& matrix) {
+	for(int row = 0; row < matrix.size(); row++) {
+		int i = 0;
+		int j = matrix[0].size() - 1;
+		while(i <= j) { //flipping & inverting
+			int temp = matrix[row][i] ^ 1;
+			matrix[row][i] = matrix[row][j] ^ 1;
+			matrix[row][j] = temp;
+			i++;
+			j--;
+		}
+	}
+}
 
 void print(const vector<vector<int>> arr) {
   for(int i=0; i < arr.size(); i++) {
